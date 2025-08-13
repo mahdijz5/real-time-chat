@@ -1,4 +1,3 @@
-using MongoDB.Bson;
 
 namespace ChatApp.Domain.ValueObjects
 {
