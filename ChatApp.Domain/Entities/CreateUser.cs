@@ -20,7 +20,7 @@ namespace ChatApp.Domain.Entities
         private CreateUser(string username, string password)
         {
             Username = NonEmptyString.MkUnsafe(username);
-            Password = Username = NonEmptyString.MkUnsafe(password);
+            Password = NonEmptyString.MkUnsafe(password);
         }
 
 
