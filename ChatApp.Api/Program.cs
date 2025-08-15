@@ -1,10 +1,6 @@
 using System.Text;
-// using ChatApp.Api.Hubs;
-// using ChatApp.Infrastructure;
-using ChatApp.Application;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using MediatR;
 using ChatApp.Infrastructure;
 using ChatApp.Api.Middleware;
 
@@ -17,23 +13,20 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddSwaggerGen();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.ASCII.GetBytes("Secret"!);
-
+var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"]!);
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+   options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+   options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
+   options.TokenValidationParameters = new TokenValidationParameters
+   {
+       ValidateIssuerSigningKey = true,
+       IssuerSigningKey = new SymmetricSecurityKey(key),
+       ValidateIssuer = false,
+       ValidateAudience = false
+   };
 });
 
 
@@ -52,9 +45,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseRouting();
 
 app.MapControllers();
 

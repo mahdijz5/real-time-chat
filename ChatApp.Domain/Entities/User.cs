@@ -25,7 +25,7 @@ namespace ChatApp.Domain.Entities
         {
             Id = MongoId.MkUnsafe(id);
             Username = NonEmptyString.MkUnsafe(username);
-            Password = Username = NonEmptyString.MkUnsafe(password);
+            Password = NonEmptyString.MkUnsafe(password);
             CreatedAt = DateTime.UtcNow;
         }
 

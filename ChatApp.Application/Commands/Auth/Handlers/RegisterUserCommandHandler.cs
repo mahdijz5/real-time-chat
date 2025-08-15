@@ -16,7 +16,6 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, U
 
     public async Task<Unit> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        Console.WriteLine(request.Username);
         User? isExists = await _userRepository.FindOneByUsername(NonEmptyString.MkUnsafe(request.Username));
         if (isExists != null)
         {
