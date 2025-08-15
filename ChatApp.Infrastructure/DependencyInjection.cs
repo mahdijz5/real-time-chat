@@ -1,4 +1,5 @@
 // /ChatApp.Infrastructure/DependencyInjection.cs
+using System.Reflection;
 using ChatApp.Application.Interfaces;
 using ChatApp.Infrastructure.Persistence;
 using MongoDB.Driver;
@@ -13,7 +14,10 @@ public static class DependencyInjection
         services.AddScoped<IMongoDatabase>(s => s.GetRequiredService<IMongoClient>().GetDatabase(configuration.GetSection("MongoDbSettings:DatabaseName").Value));
 
         services.AddScoped<IUserRepository, UserRepository>();
-
+        services.AddAutoMapper(config =>
+        {
+            config.AddMaps(Assembly.GetExecutingAssembly());
+        });
         return services;
     }
 }

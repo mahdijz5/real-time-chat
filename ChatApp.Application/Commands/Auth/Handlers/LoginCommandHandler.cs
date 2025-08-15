@@ -3,6 +3,8 @@ using ChatApp.Application.Dtos;
 using ChatApp.Application.Interfaces;
 using ChatApp.Domain.ValueObjects;
 using ChatApp.Domain.Entities;
+using System.Text.Json;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace ChatApp.Application.Commands.Auth.Handlers;
 
@@ -28,6 +30,6 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResultDto>
 
         var token = _jwtService.GenerateToken(user.Id.ToString(), user.Username.Value);
 
-        return new LoginResultDto { Token = token };
+        return new LoginResultDto { Token = token, Username = user.Username.ToString() };
     }
 }

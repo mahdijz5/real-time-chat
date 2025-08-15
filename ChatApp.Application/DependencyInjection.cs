@@ -4,7 +4,7 @@ using ChatApp.Application.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection; // <-- Add this using directive for 'Assembly'
+using System.Reflection;
 
 
 public static class DependencyInjection
@@ -20,7 +20,10 @@ public static class DependencyInjection
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-
+        services.AddAutoMapper(config =>
+        {
+            config.AddMaps(Assembly.GetExecutingAssembly());
+        });
         return services;
     }
 }

@@ -1,16 +1,18 @@
 using System.Net;
 using System.Text.Json;
 using ChatApp.Application.Exceptions;
-
+using Microsoft.Extensions.Logging;
 namespace ChatApp.Api.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next)
+    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -21,6 +23,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "An unhandled exception occurred during the request.");
             await HandleExceptionAsync(httpContext, ex);
         }
     }
