@@ -2,11 +2,9 @@ using ChatApp.Application.Interfaces;
 using ChatApp.Infrastructure.Model;
 using ChatApp.Domain.Entities;
 using MongoDB.Driver;
-using MongoDB.Bson;
 using ChatApp.Domain.ValueObjects;
 using AutoMapper;
 using ChatApp.Application.Dtos;
-using System.Text.Json;
 
 
 namespace ChatApp.Infrastructure.Persistence;
@@ -42,7 +40,7 @@ public class UserRepository : IUserRepository
             return null;
         }
 
-        return User.MkUnsafe(model._id, model.Username, model.Password);
+        return User.MkUnsafe(model._id, model.Username, model.Password, model.ChatRoomIds);
     }
 
     public async Task<User?> FindOneById(MongoId id)
@@ -54,7 +52,7 @@ public class UserRepository : IUserRepository
             return null;
         }
 
-        return User.MkUnsafe(model._id, model.Username, model.Password);
+        return User.MkUnsafe(model._id, model.Username, model.Password, model.ChatRoomIds);
     }
 
 
@@ -70,5 +68,19 @@ public class UserRepository : IUserRepository
         List<UserResDto> userList = _mapper.Map<List<UserResDto>>(users);
 
         return (userList, NonNegativeNumber.MkUnsafe(totalCount));
+    }
+
+
+    public async Task<User?> FindOneAndUpdate(User user)
+    {
+        var filter = Builders<UserModel>.Filter.Eq("_id", user.Id.Value);
+        var chatRoomValues = user.ChatRoomIds.Select(c => c.Value);
+
+        var update = Builders<UserModel>.Update
+            .Set(u => u.Username, user.Username.Value)
+            .Set(u => u.ChatRoomIds, chatRoomValues);
+
+        var updatedUser = await _users.FindOneAndUpdateAsync(filter, update);
+        return User.MkUnsafe(updatedUser._id, updatedUser.Username, updatedUser.Password, updatedUser.ChatRoomIds);
     }
 }

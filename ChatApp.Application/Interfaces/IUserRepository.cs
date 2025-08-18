@@ -10,6 +10,10 @@ public interface IUserRepository
     Task<User?> FindOneByUsername(NonEmptyString username);
 
     Task<User?> FindOneById(MongoId id);
+
+
+    Task<User?> FindOneAndUpdate(User user);
+
     Task<(List<UserResDto>, NonNegativeNumber TotalCount)> Pagination(PositiveNumber pageNumber, PositiveNumber pageSize);
 
 }
