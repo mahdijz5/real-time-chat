@@ -32,6 +32,8 @@ namespace ChatApp.Domain.ValueObjects
         }
 
         public override string ToString() => Value;
+
+
     }
 }
 

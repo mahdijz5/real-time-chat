@@ -14,6 +14,9 @@ public static class DependencyInjection
         services.AddScoped<IMongoDatabase>(s => s.GetRequiredService<IMongoClient>().GetDatabase(configuration.GetSection("MongoDbSettings:DatabaseName").Value));
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IChatRoomRepository, ChatRoomRepository>();
+
+
         services.AddAutoMapper(config =>
         {
             config.AddMaps(Assembly.GetExecutingAssembly());
