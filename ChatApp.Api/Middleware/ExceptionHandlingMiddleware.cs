@@ -31,24 +31,67 @@ public class ExceptionHandlingMiddleware
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        HttpStatusCode statusCode;
+        object response;
 
-        var response = new
+        switch (exception)
         {
-            message = "An unexpected error occurred.",
-            errors = new Dictionary<string, string[]>()
-        };
+            case ValidationException validationException:
+                statusCode = HttpStatusCode.BadRequest;
+                response = new
+                {
+                    message = "One or more validation errors occurred.",
+                    errors = validationException.Errors
+                };
+                break;
 
-        if (exception is ValidationException validationException)
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            response = new
-            {
-                message = "One or more validation errors occurred.",
-                errors = new Dictionary<string, string[]>(validationException.Errors)
-            };
+            case ConflictException:
+                statusCode = HttpStatusCode.Conflict;
+                response = new
+                {
+                    message = exception.Message,
+                    errors = new Dictionary<string, string[]>()
+                };
+                break;
+
+            case NotFoundException:
+                statusCode = HttpStatusCode.NotFound;
+                response = new
+                {
+                    message = exception.Message,
+                    errors = new Dictionary<string, string[]>()
+                };
+                break;
+
+            case BadRequestException:
+                statusCode = HttpStatusCode.BadRequest;
+                response = new
+                {
+                    message = exception.Message,
+                    errors = new Dictionary<string, string[]>()
+                };
+                break;
+
+            case UnauthorizedAccessException:
+                statusCode = HttpStatusCode.Unauthorized;
+                response = new
+                {
+                    message = exception.Message,
+                    errors = new Dictionary<string, string[]>()
+                };
+                break;
+
+            default:
+                statusCode = HttpStatusCode.InternalServerError;
+                response = new
+                {
+                    message = "An unexpected error occurred.",
+                    errors = new Dictionary<string, string[]>()
+                };
+                break;
         }
 
+        context.Response.StatusCode = (int)statusCode;
         return context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
 }

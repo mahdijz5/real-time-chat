@@ -2,6 +2,7 @@ using MediatR;
 using ChatApp.Domain.Entities;
 using ChatApp.Application.Interfaces;
 using ChatApp.Domain.ValueObjects;
+using ChatApp.Application.Exceptions;
 
 namespace ChatApp.Application.Commands.Auth.Handlers;
 
@@ -19,7 +20,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, U
         User? isExists = await _userRepository.FindOneByUsername(NonEmptyString.MkUnsafe(request.Username));
         if (isExists != null)
         {
-            throw new Exception("Username Already exists");
+            throw new BadRequestException("Username already exists");
         }
 
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
